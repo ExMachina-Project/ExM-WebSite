@@ -1,0 +1,110 @@
+#!/bin/sh
+# ============================================================================
+#  ExMachina · 安装引导脚本
+#  https://github.com/ExMachina-Project/ExMachina
+#
+#  用法:
+#    curl -fsSL https://<本站域名>/install | sh
+#    curl -fsSL https://<本站域名>/install | sh -s -- --bin    # 预编译发行版
+#    curl -fsSL https://<本站域名>/install | sh -s -- --src    # 源码构建
+#
+#  本站脚本只做预检与引导，真正的安装逻辑由上游仓库维护，
+#  以保证与代码版本严格一致。
+# ============================================================================
+set -eu
+
+REPO="ExMachina-Project/ExMachina"
+REF="${EXM_INSTALL_REF:-main}"
+UPSTREAM="${EXM_INSTALL_UPSTREAM:-https://raw.githubusercontent.com/${REPO}/${REF}/scripts/install.sh}"
+
+c_reset=$(printf '\033[0m')
+c_dim=$(printf '\033[2m')
+c_accent=$(printf '\033[38;5;105m')
+c_red=$(printf '\033[31m')
+c_yellow=$(printf '\033[33m')
+
+say()  { printf '%s\n' "$*"; }
+info() { printf '%s▸%s %s\n' "$c_accent" "$c_reset" "$*"; }
+die()  { printf '%s✗%s %s\n' "$c_red" "$c_reset" "$*" >&2; exit 1; }
+
+case "${1:-}" in
+  -h|--help)
+    cat <<'USAGE'
+EXMACHINA · installer bootstrap
+
+  --bin    安装预编译发行版（推荐，无需 Rust / Node.js）
+  --src    从源码构建（需要 Rust stable 与 Node.js >= 22）
+  无参数    交互式选择
+
+环境变量:
+  EXM_INSTALL_REF       上游分支/标签，默认 main
+  EXM_INSTALL_UPSTREAM  覆盖上游安装脚本地址（调试用）
+USAGE
+    exit 0
+    ;;
+esac
+
+say ""
+say "  EXMACHINA / installer"
+say "  ${c_dim}collective intelligence system${c_reset}"
+say ""
+
+info "检查运行环境"
+
+case "$(uname -s 2>/dev/null || echo unknown)" in
+  Linux)  os="linux" ;;
+  Darwin) os="macos" ;;
+  *) die "不支持的系统: $(uname -s 2>/dev/null || echo unknown)。Windows 请使用 /install.bat" ;;
+esac
+printf '    %-9s %s (%s)\n' "system" "$os" "$(uname -m 2>/dev/null || echo '?')"
+
+if command -v curl >/dev/null 2>&1; then
+  fetch="curl"
+elif command -v wget >/dev/null 2>&1; then
+  fetch="wget"
+else
+  die "需要 curl 或 wget 来下载安装脚本"
+fi
+printf '    %-9s %s\n' "fetcher" "$fetch"
+
+say ""
+info "获取上游安装脚本"
+printf '    %-9s %s\n' "repo" "$REPO"
+printf '    %-9s %s\n' "ref" "$REF"
+say ""
+
+tmp_script=$(mktemp 2>/dev/null || printf '/tmp/exm-install.%s' "$$")
+cleanup() { rm -f "$tmp_script" 2>/dev/null || true; }
+trap cleanup EXIT INT TERM
+
+if [ "$fetch" = "curl" ]; then
+  curl -fsSL --connect-timeout 15 --retry 2 --retry-delay 1 -o "$tmp_script" "$UPSTREAM" \
+    || die "下载安装脚本失败：$UPSTREAM"
+else
+  wget -qO "$tmp_script" "$UPSTREAM" \
+    || die "下载安装脚本失败：$UPSTREAM"
+fi
+
+[ -s "$tmp_script" ] || die "安装脚本为空：$UPSTREAM"
+
+info "移交安装流程（上游脚本）"
+say ""
+
+status=0
+if command -v bash >/dev/null 2>&1; then
+  bash "$tmp_script" "$@" || status=$?
+else
+  sh "$tmp_script" "$@" || status=$?
+fi
+
+say ""
+if [ "$status" -eq 0 ]; then
+  printf '%s✓%s 安装完成。启动网关后打开 %shttp://127.0.0.1:4173%s\n' "$c_accent" "$c_reset" "$c_accent" "$c_reset"
+  printf '  %s首次使用请到「模型」页配置提供商与 API 密钥。%s\n' "$c_dim" "$c_reset"
+else
+  printf '%s✗%s 安装未完成（退出码 %s）。\n' "$c_red" "$c_reset" "$status"
+  printf '  %s文档：https://github.com/%s/blob/%s/docs/安装指南.md%s\n' "$c_dim" "$REPO" "$REF" "$c_reset"
+fi
+say ""
+
+exit "$status"
