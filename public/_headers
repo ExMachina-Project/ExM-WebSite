@@ -1,0 +1,9 @@
+# Cloudflare Pages serves the exported installer files without a Next.js server.
+/install
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=300
+
+/install.bat
+  Content-Type: text/plain; charset=utf-8
+  Content-Disposition: attachment; filename="install.bat"
+  Cache-Control: public, max-age=300

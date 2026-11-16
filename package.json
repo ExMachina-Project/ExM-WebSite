@@ -6,8 +6,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "lint": "oxlint src next.config.js",
+    "build:cloudflare": "node scripts/build-cloudflare.ts",
+    "lint": "oxlint src scripts next.config.ts",
+    "typecheck": "next typegen && tsc --noEmit",
     "start": "next start"
+  },
+  "engines": {
+    "node": ">=22.18.0"
   },
   "dependencies": {
     "github-slugger": "^2.0.0",
@@ -20,8 +25,11 @@
     "unified": "^11.0.5"
   },
   "devDependencies": {
+    "@types/mdast": "^4.0.4",
+    "@types/node": "^22.20.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "oxlint": "^1.90.0"
+    "oxlint": "^1.90.0",
+    "typescript": "^7.0.2"
   }
 }

@@ -9,6 +9,8 @@ lerna-debug.log*
 
 node_modules
 .next
+next-env.d.ts
+*.tsbuildinfo
 out
 dist
 dist-ssr
@@ -16,6 +18,9 @@ dist-ssr
 .env
 .env.*
 !.env.example
+.wrangler/
+.dev.vars
+.dev.vars.*
 
 # Editor directories and files
 .vscode/*
