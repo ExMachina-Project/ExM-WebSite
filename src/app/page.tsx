@@ -18,7 +18,7 @@ const PILLARS = [
 
 const CAPABILITIES = [
   { type: 'swarm', title: '集体编排', description: '任务 DAG、拓扑调度、并发执行与节点级重试。让复杂目标沿清晰的依赖路径推进。', signal: 'ORCHESTRATION', tags: ['DAG', '并行执行', '契约回流'], href: '/docs/architecture' },
-  { type: 'agent', title: '个人智能体', description: '轻任务直接对话，需要时再扩成一支协作队伍。', signal: 'SINGLE AGENT', tags: ['SOUL', '工具循环'], href: '/docs/usage' },
+  { type: 'agent', title: '单个智能体', description: '一个交互目标，自主推进多步任务。结合系统提示与会话历史调用工具，支持编码、分层记忆、自定义 SOUL 与多模型。', signal: 'SINGLE AGENT', tags: ['自主工具循环', '直接服务'], href: '/docs/usage' },
   { type: 'memory', title: '分层记忆', description: '个体私有与群体共享，在明确边界内积累经验。', signal: 'LAYERED MEMORY', tags: ['私有', '共享'], href: '/docs/architecture' },
   { type: 'tools', title: '受控工具', description: '沙箱、白名单、审批与调用审计，为执行划定边界。', signal: 'POLICY & AUDIT', tags: ['沙箱', '审批策略'], href: '/docs/security' },
   { type: 'connect', title: '开放接入', description: 'REST、WebSocket、多模型协议与 MCP。让已有工具接入你的智能体。', signal: 'OPEN INTERFACES', tags: ['MCP', 'REST / WS', '插件'], href: '/docs/plugins' },
@@ -69,9 +69,9 @@ export default function Page() {
         <section className="readme-section" id="modes" data-reveal>
           <span className="section-eyebrow">02 / TWO MODES. ONE SYSTEM.</span>
           <div className="readme-section-title"><h2>独立思考。<br className="mobile-break" /> 协同进化。</h2></div>
-          <p>按任务的重量选择交互目标。两种形态共用记忆、模型、工具与 SOUL；日常工作直接执行，复杂工作按编队协作。</p>
+          <p>选择单个智能体直接执行，或选择智能体组分工协作。两种交互目标共用记忆、模型与工具底座；切换目标时，会话上下文随之切换。</p>
           <div className="agent-modes">
-            <article><div className="mode-card-top"><span className="mode-label">01 / SINGLE</span><span>专注一个任务</span></div><div className="mode-visual mode-visual--single" aria-hidden="true"><i /><i /><i /><BrandMark /></div><h3>轻任务，直接服务。</h3><p>系统提示、会话历史与工具循环，产出即回答。终端、文件、浏览器、MCP 和分层记忆全部可用。</p><code>输入 → 智能体 → 工具 → 回答</code></article>
+            <article><div className="mode-card-top"><span className="mode-label">01 / SINGLE AGENT</span><span>直接服务</span></div><div className="mode-visual mode-visual--single" aria-hidden="true"><i /><i /><i /><BrandMark /></div><h3>不经组调度，自主完成工作。</h3><p>智能体结合系统提示与会话历史，自主调用工具直至完成答复。终端、文件修改、浏览器与 MCP 按权限开放，并支持分层记忆、模型选择与自定义 SOUL。</p><code>会话 → 工具循环 → 答复</code></article>
             <article><div className="mode-card-top"><span className="mode-label">02 / COLLECTIVE</span><span>应对复杂目标</span></div><div className="mode-visual mode-visual--collective" aria-hidden="true"><i /><i /><i /><BrandMark /><span /><span /><span /><span /></div><h3>重任务，成军协作。</h3><p>指挥体锁定边界、拆分任务；专业子个体并行执行，通过结构化契约回流。冲突显式裁决，结果进入三账。</p><code>输入 → 编队 → 验收 → 收束</code></article>
           </div>
           <blockquote className="soul-note"><b>理性或感性，都只是一份 SOUL。</b> 人设是 <code>entities/</code> 下可编辑的数据。更换表达风格，记忆、工具与协作机制继续沿用。</blockquote>
